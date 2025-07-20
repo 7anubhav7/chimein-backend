@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
-import { socketSpeakServer } from './setupServer';
-import databaseConnection from './setupDatabase';
-import { config } from './config';
+import { socketSpeakServer } from '@root/setupServer';
+import databaseConnection from '@root/setupDatabase';
+import { config } from '@root/config';
 
 class Application {
   public initialize(): void {
