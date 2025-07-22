@@ -66,12 +66,13 @@ export class socketSpeakServer {
       res.status(HTTP_STATUS.NOT_FOUND).json({ message: `${req.originalUrl} not found` });
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
       log.error(error);
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json(error.serializeErrors());
       }
-      next();
+      return res.status(500).json({ message: 'Internal Server Error', error: error.message || 'Something went wrong' });
     });
   }
 
@@ -107,7 +108,8 @@ export class socketSpeakServer {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private socketIOConnection(io: Server): void {
-    console.log('socket connections', io);
+    log.info('socket connections');
   }
 }
