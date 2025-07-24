@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BaseQueue } from './base.queue';
 import { userWorker } from '@worker/user.worker';
 
 class UserQueue extends BaseQueue {
   constructor() {
-    super('auth');
+    super('user');
     this.processJob('addUserToDB', 5, userWorker.addUserToDB);
   }
 
