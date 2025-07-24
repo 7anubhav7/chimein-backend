@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export class Helpers {
   static firstLetterUpperCase(str: string): string {
     const valueString = str.toLowerCase();
@@ -19,5 +21,13 @@ export class Helpers {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return parseInt(result, 10);
+  }
+
+  static parseJson(prop: string): any {
+    try {
+      JSON.parse(prop);
+    } catch (error) {
+      return prop;
+    }
   }
 }
