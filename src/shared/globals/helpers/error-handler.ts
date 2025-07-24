@@ -1,5 +1,4 @@
 import HTTP_STATUS from 'http-status-codes';
-import { NumberSchemaDefinition } from 'mongoose';
 
 export interface IErrorResponse {
   message: string;
