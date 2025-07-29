@@ -32,6 +32,7 @@ class Config {
     this.REDIS_HOST = process.env.REDIS_HOST || '';
     this.CLOUD_NAME = process.env.CLOUD_NAME || '';
     this.CLOUD_API_KEY = process.env.CLOUD_API_KEY || '';
+    this.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || '';
 
     this.SENDER_EMAIL = process.env.SENDER_EMAIL || '';
     this.SENDER_EMAIL_PASSWORD = process.env.SENDER_EMAIL_PASSWORD || '';
