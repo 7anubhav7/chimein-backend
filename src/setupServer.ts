@@ -13,6 +13,7 @@ import Logger from 'bunyan';
 import { config } from '@root/config';
 import applicationRoutes from '@root/routes';
 import { CustomError, IErrorResponse } from '@global/helpers/error-handler';
+import { SocketIOPostHandler } from '@sockets/post';
 
 const SERVER_PORT = 5000; //to used in aws and load balancers
 const log: Logger = config.createLogger('server');
@@ -108,8 +109,9 @@ export class socketSpeakServer {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private socketIOConnection(io: Server): void {
-    log.info('socket connections');
+    const postSocketHandler: SocketIOPostHandler = new SocketIOPostHandler(io);
+
+    postSocketHandler.listen();
   }
 }
