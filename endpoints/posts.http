@@ -9,11 +9,11 @@ withCredentials: true
 
 {
   "post":"This is my first post",
-"bgColor":"#4aa1f3",
+"bgColor":"#ffffffff",
 "privacy":"Public",
 "gifUrl":"",
 "profilePicture": "https://res.cloudinary.com/dtncgifkk/image/upload/v1753350357/688200d37428834af0839965",
-"feelings":"happy"
+"feelings":""
 }
 
 
@@ -24,7 +24,7 @@ Accept: application/json
 withCredentials: true
 
 {
-  "post":"Second post with image",
+  "post":"First post with image",
 "bgColor":"#4aa1f3",
 "privacy":"Private",
 "gifUrl":"",
@@ -41,9 +41,9 @@ Accept: application/json
 withCredentials: true
 
 {
-  "post":"This is my third post",
-"bgColor":"#ffffff",
-"privacy":"Public",
+  "post":"This is my second post",
+"bgColor":"#4aa1f3",
+"privacy":"Private",
 "gifUrl":"",
 "profilePicture": "https://res.cloudinary.com/dtncgifkk/image/upload/v1753350357/688200d37428834af0839965",
 "feelings":"happy"
