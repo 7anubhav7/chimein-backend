@@ -26,3 +26,13 @@ GET {{baseUrl}}/{{urlPath}}/user/following
 Content-Type: application/json
 Accept: application/json
 withCredentials: true
+
+
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/block/688a547d074d8bc594a256d6
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{}

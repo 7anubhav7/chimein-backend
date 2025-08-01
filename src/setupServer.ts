@@ -113,8 +113,10 @@ export class socketSpeakServer {
   private socketIOConnection(io: Server): void {
     const postSocketHandler: SocketIOPostHandler = new SocketIOPostHandler(io);
     const followerSocketHandler: SocketIOFollowerHandler = new SocketIOFollowerHandler(io);
+    const userSocketHandler: SocketIOFollowerHandler = new SocketIOFollowerHandler(io);
 
     postSocketHandler.listen();
     followerSocketHandler.listen();
+    userSocketHandler.listen();
   }
 }
