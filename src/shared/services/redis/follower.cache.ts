@@ -2,8 +2,13 @@ import { ServerError } from '@global/helpers/error-handler';
 import { config } from '@root/config';
 import { BaseCache } from '@service/redis/base.cache';
 import Logger from 'bunyan';
+import { UserCache } from './user.cache';
+import { IUserDocument } from '@user/interfaces/user.interface';
+import { IFollowerData } from '@follower/interfaces/follower.interface';
+import mongoose from 'mongoose';
 
 const log: Logger = config.createLogger('followersCache');
+const userCache: UserCache = new UserCache();
 
 export class FollowerCache extends BaseCache {
   constructor() {
@@ -40,6 +45,36 @@ export class FollowerCache extends BaseCache {
         await this.client.connect();
       }
       await this.client.HINCRBY(`users:${userId}`, prop, value);
+    } catch (error) {
+      log.error(error);
+      throw new ServerError('Server error. Try again!');
+    }
+  }
+
+  public async getFollowersFromCache(key: string): Promise<IFollowerData[]> {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+
+      const response: string[] = await this.client.LRANGE(key, 0, -1);
+      const list: IFollowerData[] = [];
+      for (const item of response) {
+        const user: IUserDocument = (await userCache.getUserFromCache(item)) as IUserDocument;
+        const data: IFollowerData = {
+          _id: new mongoose.Types.ObjectId(user._id),
+          username: user.username!,
+          avatarColor: user.avatarColor!,
+          followersCount: user.followersCount,
+          followingCount: user.followingCount,
+          profilePicture: user.profilePicture,
+          uId: user.uId!,
+          userProfile: user,
+          postCount: user.postsCount
+        };
+        list.push(data);
+      }
+      return list;
     } catch (error) {
       log.error(error);
       throw new ServerError('Server error. Try again!');
