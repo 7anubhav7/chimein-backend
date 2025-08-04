@@ -16,6 +16,7 @@ import { CustomError, IErrorResponse } from '@global/helpers/error-handler';
 import { SocketIOPostHandler } from '@sockets/post';
 import { SocketIOFollowerHandler } from '@sockets/follower';
 import { SocketIONotificationHandler } from '@sockets/notification';
+import { SocketIOImageHandler } from '@sockets/image';
 
 const SERVER_PORT = 5000; //to used in aws and load balancers
 const log: Logger = config.createLogger('server');
@@ -116,10 +117,12 @@ export class socketSpeakServer {
     const followerSocketHandler: SocketIOFollowerHandler = new SocketIOFollowerHandler(io);
     const userSocketHandler: SocketIOFollowerHandler = new SocketIOFollowerHandler(io);
     const notificationSocketHandler: SocketIONotificationHandler = new SocketIONotificationHandler();
+    const imageSocketHandler: SocketIOImageHandler = new SocketIOImageHandler();
 
     postSocketHandler.listen();
     followerSocketHandler.listen();
     userSocketHandler.listen();
     notificationSocketHandler.listen(io);
+    imageSocketHandler.listen(io);
   }
 }
