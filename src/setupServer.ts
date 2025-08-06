@@ -17,6 +17,7 @@ import { SocketIOPostHandler } from '@sockets/post';
 import { SocketIOFollowerHandler } from '@sockets/follower';
 import { SocketIONotificationHandler } from '@sockets/notification';
 import { SocketIOImageHandler } from '@sockets/image';
+import { SocketIOChatHandler } from '@sockets/chat';
 
 const SERVER_PORT = 5000; //to used in aws and load balancers
 const log: Logger = config.createLogger('server');
@@ -118,10 +119,12 @@ export class socketSpeakServer {
     const userSocketHandler: SocketIOFollowerHandler = new SocketIOFollowerHandler(io);
     const notificationSocketHandler: SocketIONotificationHandler = new SocketIONotificationHandler();
     const imageSocketHandler: SocketIOImageHandler = new SocketIOImageHandler();
+    const chatSocketHandler: SocketIOChatHandler = new SocketIOChatHandler(io);
 
     postSocketHandler.listen();
     followerSocketHandler.listen();
     userSocketHandler.listen();
+    chatSocketHandler.listen();
     notificationSocketHandler.listen(io);
     imageSocketHandler.listen(io);
   }

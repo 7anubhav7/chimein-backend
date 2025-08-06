@@ -1,0 +1,51 @@
+@baseUrl=http://localhost:5000
+@urlPath = api/v1
+
+###
+POST {{baseUrl}}/{{urlPath}}/chat/message
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "conversationId": "68931452df7914261176e7b4",
+  "receiverId": "6888cf9ee0b759f0def369d2",
+  "receiverUsername": "Manny",
+  "receiverAvatarColor": "blue",
+  "receiverProfilePicture": "https://res.cloudinary.com/dtncgifkk/image/upload/v1754308053/6888cf9ee0b759f0def369d2",
+  "body": "Msg for Manny",
+  "gifUrl": "",
+  "isRead": true,
+  "selectedImage": ""
+}
+
+###
+POST {{baseUrl}}/{{urlPath}}/chat/message/add-chat-users
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "userOne": "68931452df7914261176e7b4",
+  "userTwo": "6888cf9ee0b759f0def369d2"
+}
+
+###
+GET {{baseUrl}}/{{urlPath}}/chat/message/conversation-list
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/chat/message/user/6888cf9ee0b759f0def369d2
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+DELETE {{baseUrl}}/{{urlPath}}/chat/message/mark-as-deleted/68936b405e638110cd9e06bf/688b67212b2d2139a8102199/6888cf9ee0b759f0def369d2/deleteForEveryone
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
