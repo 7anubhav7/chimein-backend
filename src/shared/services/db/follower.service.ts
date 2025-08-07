@@ -10,6 +10,7 @@ import { IUserDocument } from '@user/interfaces/user.interface';
 import { UserModel } from '@user/models/user.schema';
 import { BulkWriteResult, ObjectId } from 'mongodb';
 import mongoose from 'mongoose';
+import { map } from 'lodash';
 
 const userCache: UserCache = new UserCache();
 
@@ -167,6 +168,19 @@ class FollowerService {
       }
     ]);
     return follower;
+  }
+
+  public async getFolloweesIds(userId: string): Promise<string[]> {
+    const followee = await FollowerModel.aggregate([
+      { $match: { followerId: new mongoose.Types.ObjectId(userId) } },
+      {
+        $project: {
+          followeeId: 1,
+          _id: 0
+        }
+      }
+    ]);
+    return map(followee, (result) => result.followeeId.toString());
   }
 }
 

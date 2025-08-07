@@ -151,7 +151,7 @@ export class PostCache extends BaseCache {
       }
 
       //REV is not supported
-      const reply: string[] = await this.client.ZRANGE(key, uId, uId, { BY: 'SCORE' });
+      const reply: string[] = await this.client.ZRANGEBYSCORE(key, uId, uId);
       const multi: ReturnType<typeof this.client.multi> = this.client.multi();
       for (let i = reply.length - 1; i >= 0; i--) {
         multi.HGETALL(`posts:${reply[i]}`);
