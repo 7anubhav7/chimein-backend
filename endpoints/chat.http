@@ -13,9 +13,9 @@ withCredentials: true
   "receiverUsername": "Manny",
   "receiverAvatarColor": "blue",
   "receiverProfilePicture": "https://res.cloudinary.com/dtncgifkk/image/upload/v1754308053/6888cf9ee0b759f0def369d2",
-  "body": "Msg for Manny",
+  "body": "Fourth message for manny",
   "gifUrl": "",
-  "isRead": true,
+  "isRead": false,
   "selectedImage": ""
 }
 
@@ -49,3 +49,29 @@ DELETE {{baseUrl}}/{{urlPath}}/chat/message/mark-as-deleted/68936b405e638110cd9e
 Content-Type: application/json
 Accept: application/json
 withCredentials: true
+
+
+###
+PUT {{baseUrl}}/{{urlPath}}/chat/message/mark-as-read
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "senderId":"688b67212b2d2139a8102199",
+  "receiverId":"6888cf9ee0b759f0def369d2"
+}
+
+###
+PUT {{baseUrl}}/{{urlPath}}/chat/message/reaction
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "conversationId":"68931452df7914261176e7b4",
+  "messageId":"689482ccdb5c6612b6cbca97",
+  "reaction":"happy",
+  "type":"add"
+}
+
