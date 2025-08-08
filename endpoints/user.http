@@ -1,0 +1,97 @@
+@baseUrl=http://localhost:5000
+@urlPath = api/v1
+
+###
+GET {{baseUrl}}/{{urlPath}}/user/all/1
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/user/profile
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/user/profile/688a547d074d8bc594a256d6
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/user/profile/posts/Lanny/688b67212b2d2139a8102199/167938259957
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/user/profile/user/suggestions
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/user/profile/search/a
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/change-password
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "currentPassword": "pass",
+  "newPassword": "pass1",
+  "confirmPassword": "pass1"
+}
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/basic-info
+content-type: application/json
+Accept: 'application/json'
+withCredentials: true
+
+{
+  "quote": "Tomorrow is a mystery. Today is a gift. That's why we call it The Present",
+  "work": "",
+  "school": "VIT-AP",
+  "location": "Amravati, Andhra Pradesh"
+}
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/social-links
+content-type: application/json
+Accept: 'application/json'
+withCredentials: true
+
+{
+  "instagram": "",
+  "twitter": "",
+  "facebook": "https://www.facebook.com/gitlab",
+  "youtube": "https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley"
+}
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/settings
+content-type: application/json
+Accept: 'application/json'
+withCredentials: true
+
+{
+  "messages": false,
+  "reactions": true,
+  "comments": false,
+  "follows": true
+}
