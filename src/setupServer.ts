@@ -19,6 +19,7 @@ import { SocketIONotificationHandler } from '@sockets/notification';
 import { SocketIOImageHandler } from '@sockets/image';
 import { SocketIOChatHandler } from '@sockets/chat';
 import { SocketIOUserHandler } from '@sockets/user';
+import apiStats from 'swagger-stats';
 
 const SERVER_PORT = 5000; //to used in aws and load balancers
 const log: Logger = config.createLogger('server');
@@ -30,11 +31,12 @@ export class socketSpeakServer {
   }
 
   public start(): void {
+    this.apiMonitoring(this.app);
     this.securityMiddleware(this.app);
     this.standardMiddleware(this.app);
+    this.startServer(this.app);
     this.routeMiddleware(this.app);
     this.globalErrorHandler(this.app);
-    this.startServer(this.app);
   }
 
   private securityMiddleware(app: Application): void {
@@ -65,6 +67,14 @@ export class socketSpeakServer {
 
   private routeMiddleware(app: Application): void {
     applicationRoutes(app);
+  }
+
+  private apiMonitoring(app: Application): void {
+    app.use(
+      apiStats.getMiddleware({
+        uriPath: '/api-monitoring'
+      })
+    );
   }
 
   private globalErrorHandler(app: Application): void {

@@ -40,7 +40,7 @@ class HealthRoutes {
   }
 
   public fiboRoutes(): Router {
-    this.router.get('/instance', async (req: Request, res: Response) => {
+    this.router.get('/fibo/:num', async (req: Request, res: Response) => {
       const { num } = req.params;
       const start: number = performance.now();
       const result: number = this.fibo(parseInt(num, 10));
@@ -52,7 +52,7 @@ class HealthRoutes {
       res
         .status(HTTTP_STATUS.OK)
         .send(
-          `Fibonacci series of ${num} is ${result} and it took ${end - start}ms with EC2 instance of ${response.data} and process id ${process.pid} on ${moment().format('LL')}`
+          `Fibonacci series of ${num} is ${result} and it took ${end - start}ms with EC2 instance of ${response} and process id ${process.pid} on ${moment().format('LL')}`
         );
     });
     return this.router;
