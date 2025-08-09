@@ -13,6 +13,13 @@ import Logger from 'bunyan';
 import { config } from '@root/config';
 import applicationRoutes from '@root/routes';
 import { CustomError, IErrorResponse } from '@global/helpers/error-handler';
+import { SocketIOPostHandler } from '@sockets/post';
+import { SocketIOFollowerHandler } from '@sockets/follower';
+import { SocketIONotificationHandler } from '@sockets/notification';
+import { SocketIOImageHandler } from '@sockets/image';
+import { SocketIOChatHandler } from '@sockets/chat';
+import { SocketIOUserHandler } from '@sockets/user';
+import apiStats from 'swagger-stats';
 
 const SERVER_PORT = 5000; //to used in aws and load balancers
 const log: Logger = config.createLogger('server');
@@ -24,11 +31,12 @@ export class socketSpeakServer {
   }
 
   public start(): void {
+    this.apiMonitoring(this.app);
     this.securityMiddleware(this.app);
     this.standardMiddleware(this.app);
+    this.startServer(this.app);
     this.routeMiddleware(this.app);
     this.globalErrorHandler(this.app);
-    this.startServer(this.app);
   }
 
   private securityMiddleware(app: Application): void {
@@ -61,21 +69,33 @@ export class socketSpeakServer {
     applicationRoutes(app);
   }
 
+  private apiMonitoring(app: Application): void {
+    app.use(
+      apiStats.getMiddleware({
+        uriPath: '/api-monitoring'
+      })
+    );
+  }
+
   private globalErrorHandler(app: Application): void {
     app.all('*', (req: Request, res: Response) => {
       res.status(HTTP_STATUS.NOT_FOUND).json({ message: `${req.originalUrl} not found` });
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     app.use((error: IErrorResponse, req: Request, res: Response, next: NextFunction) => {
       log.error(error);
       if (error instanceof CustomError) {
         return res.status(error.statusCode).json(error.serializeErrors());
       }
-      next();
+      return res.status(500).json({ message: 'Internal Server Error', error: error.message || 'Something went wrong' });
     });
   }
 
   private async startServer(app: Application): Promise<void> {
+    if (!config.JWT_TOKEN) {
+      throw new Error('JWT_TOKEN must be provided');
+    }
     try {
       const httpServer: http.Server = new http.Server(app);
       const socketIO: Server = await this.createSocketIO(httpServer);
@@ -101,6 +121,7 @@ export class socketSpeakServer {
   }
 
   private startHttpServer(httpServer: http.Server): void {
+    log.info(`Worker with process id of ${process.pid} has started...`);
     log.info(`Server has started with process ${process.pid}`);
     httpServer.listen(SERVER_PORT, () => {
       log.info(`Server running on port ${SERVER_PORT}`);
@@ -108,6 +129,18 @@ export class socketSpeakServer {
   }
 
   private socketIOConnection(io: Server): void {
-    console.log('socket connections', io);
+    const postSocketHandler: SocketIOPostHandler = new SocketIOPostHandler(io);
+    const followerSocketHandler: SocketIOFollowerHandler = new SocketIOFollowerHandler(io);
+    const userSocketHandler: SocketIOUserHandler = new SocketIOUserHandler(io);
+    const notificationSocketHandler: SocketIONotificationHandler = new SocketIONotificationHandler();
+    const imageSocketHandler: SocketIOImageHandler = new SocketIOImageHandler();
+    const chatSocketHandler: SocketIOChatHandler = new SocketIOChatHandler(io);
+
+    postSocketHandler.listen();
+    followerSocketHandler.listen();
+    userSocketHandler.listen();
+    chatSocketHandler.listen();
+    notificationSocketHandler.listen(io);
+    imageSocketHandler.listen(io);
   }
 }
