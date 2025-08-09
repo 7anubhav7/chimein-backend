@@ -1,0 +1,31 @@
+@baseUrl=http://localhost:5000
+@urlPath = api/v1
+
+
+###
+POST {{baseUrl}}/{{urlPath}}/post/comment
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "userTo":"6888cf9ee0b759f0def369d2",
+"postId":"688ce7e10c65897b58b07b3e",
+"profilePicture": "https://res.cloudinary.com/dtncgifkk/image/upload/v1753350357/688200d37428834af0839965",
+"comment":"This is my first comment"
+
+}
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/post/commentsnames/688a38c86962fd259ac203c5
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+###
+GET {{baseUrl}}/{{urlPath}}/post/single/comments/688a38c86962fd259ac203c5/688b50d43567373610409df9
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
