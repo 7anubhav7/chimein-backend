@@ -20,6 +20,7 @@ class Config {
   public SENDGRID_API_KEY: string;
   public SENDGRID_SENDER: string | undefined;
   public EC2_URL: string | undefined;
+  public API_URL: string | undefined;
 
   private readonly DEFAULT_DATABASE_URL = 'mongodb://127.0.0.1:27017/chimein-backend';
 
@@ -34,6 +35,7 @@ class Config {
     this.CLOUD_NAME = process.env.CLOUD_NAME || '';
     this.CLOUD_API_KEY = process.env.CLOUD_API_KEY || '';
     this.CLOUD_API_SECRET = process.env.CLOUD_API_SECRET || '';
+    this.API_URL = process.env.API_URL || '';
 
     this.SENDER_EMAIL = process.env.SENDER_EMAIL || '';
     this.SENDER_EMAIL_PASSWORD = process.env.SENDER_EMAIL_PASSWORD || '';
