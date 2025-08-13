@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import Logger from 'bunyan';
-import sendGridMail from '@sendgrid/mail';
 import { config } from '@root/config';
 import { BadRequestError } from '@global/helpers/error-handler';
 
@@ -11,13 +10,12 @@ interface IMailOptions {
   subject: string;
   html: string;
 }
-
+const senderEmail: string = 'no-reply@chimein.ink'; //verified on brevo
 const log: Logger = config.createLogger('mailOptions');
-sendGridMail.setApiKey(config.SENDGRID_API_KEY);
 
 class MailTransport {
   public async sendEmail(receiverEmail: string, subject: string, body: string): Promise<void> {
-    if (config.NODE_ENV === 'test' || config.NODE_ENV === 'development') {
+    if (config.NODE_ENV === 'development') {
       this.developmentEmailSender(receiverEmail, subject, body);
     } else {
       this.productionEmailSender(receiverEmail, subject, body);
@@ -36,7 +34,7 @@ class MailTransport {
     });
 
     const mailOptions: IMailOptions = {
-      from: `ChimeIn App <${config.SENDER_EMAIL}>`,
+      from: `ChimeIn App ${config.SENDER_EMAIL}`,
       to: receiverEmail,
       subject,
       html: body
@@ -44,26 +42,36 @@ class MailTransport {
 
     try {
       await transporter.sendMail(mailOptions);
-      log.info('Development email sent successful');
+      log.info('Development email sent successfully');
     } catch (error) {
-      log.error('Error sending email', error);
+      log.error('Error sending development email', error);
       throw new BadRequestError('Error sending email');
     }
   }
 
   private async productionEmailSender(receiverEmail: string, subject: string, body: string): Promise<void> {
+    const transporter: Mail = nodemailer.createTransport({
+      host: 'smtp-relay.brevo.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: config.BREVO_USER,
+        pass: config.BREVO_PASS
+      }
+    });
+
     const mailOptions: IMailOptions = {
-      from: `ChimeIn App <${config.SENDER_EMAIL}>`,
+      from: `ChimeIn App ${senderEmail}`,
       to: receiverEmail,
       subject,
       html: body
     };
 
     try {
-      await sendGridMail.send(mailOptions);
-      log.info('Production email sent successful');
+      await transporter.sendMail(mailOptions);
+      log.info('Production email sent successfully');
     } catch (error) {
-      log.error('Error sending email', error);
+      log.error('Error sending production email', error);
       throw new BadRequestError('Error sending email');
     }
   }

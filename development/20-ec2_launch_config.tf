@@ -15,6 +15,7 @@ resource "aws_launch_template" "asg_launch_configuration" {
     security_groups             = [aws_security_group.auto_scaling_group_sg.id]
   }
 
+  user_data = filebase64("${path.module}/userdata/user-data.sh")
   lifecycle {
     create_before_destroy = true
   }
