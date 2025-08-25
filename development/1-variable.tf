@@ -13,19 +13,19 @@ variable "vpc_cidr_block" {
 variable "vpc_availability_zones" {
   description = "VPC Availability Zones"
   type        = list(string)
-  default     = ["ap-south-1a","ap-south-1b"]
+  default     = ["ap-south-1a", "ap-south-1b"]
 }
 
 variable "vpc_public_subnets" {
   description = "VPC Public Subnets"
   type        = list(string)
-  default     = ["10.0.1.0/24","10.0.2.0/24"]
+  default     = ["10.0.1.0/24", "10.0.2.0/24"]
 }
 
 variable "vpc_private_subnets" {
   description = "VPC Private Subnets"
   type        = list(string)
-  default     = ["10.0.3.0/24","10.0.4.0/24"]
+  default     = ["10.0.3.0/24", "10.0.4.0/24"]
 }
 
 variable "global_destination_cidr_block" {
@@ -37,7 +37,7 @@ variable "global_destination_cidr_block" {
 variable "bastion_host_cidr" {
   description = "CIDR Block for Bastion Host Ingress"
   type        = string
-  default     = "172.18.116.50" //Your own ip
+  default     = "0.0.0.0/0" //Your own ip
 }
 
 variable "https_ssl_policy" {

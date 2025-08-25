@@ -6,7 +6,7 @@ resource "aws_iam_role" "ec2_iam_role" {
       {
         Action = "sts:AssumeRole"
         Effect = "Allow"
-        Principle = {
+        Principal = {
           Service = ["ec2.amazonaws.com", "application-autoscaling.amazonaws.com"]
         }
       }
@@ -15,8 +15,8 @@ resource "aws_iam_role" "ec2_iam_role" {
 }
 
 resource "aws_iam_role_policy" "ec2_iam_role_policy" {
-  name = var.ec2_iam_role_policy_name
-  role = aws_iam_role.ec2_iam_role.id
+  name   = var.ec2_iam_role_policy_name
+  role   = aws_iam_role.ec2_iam_role.id
   policy = <<EOF
 {
   "Version" : "2012-10-17",

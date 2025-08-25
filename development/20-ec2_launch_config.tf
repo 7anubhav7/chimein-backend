@@ -12,7 +12,7 @@ resource "aws_launch_template" "asg_launch_configuration" {
     network_card_index          = 0
     device_index                = 0
     associate_public_ip_address = false
-    security_groups             = [aws_security_group.auto_scaling_group_sg.id]
+    security_groups             = [aws_security_group.autoscaling_group_sg.id]
   }
 
   user_data = filebase64("${path.module}/userdata/user-data.sh")

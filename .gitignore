@@ -141,3 +141,7 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
+
+#Terraform
+.terraform
+.terraform.*

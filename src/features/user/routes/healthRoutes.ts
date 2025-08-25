@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express, { Router, Request, Response } from 'express';
 import moment from 'moment';
 import axios from 'axios';
@@ -28,32 +29,46 @@ class HealthRoutes {
 
   public instance(): Router {
     this.router.get('/instance', async (req: Request, res: Response) => {
-      const response = await axios({
-        method: 'get',
-        url: config.EC2_URL
-      });
-      res
-        .status(HTTTP_STATUS.OK)
-        .send(`Server is running on EC2 instance with id ${response.data} and process id ${process.pid} on ${moment().format('LL')}`);
+      try {
+        const response = await axios.get('http://169.254.169.254/latest/meta-data/instance-id', {
+          timeout: 1000 // prevent hanging
+        });
+        res
+          .status(HTTTP_STATUS.OK)
+          .send(`Server is running on EC2 instance with id ${response.data} and process id ${process.pid} on ${moment().format('LL')}`);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        res.status(HTTTP_STATUS.INTERNAL_SERVER_ERROR).send('Could not fetch instance ID');
+      }
     });
     return this.router;
   }
 
   public fiboRoutes(): Router {
     this.router.get('/fibo/:num', async (req: Request, res: Response) => {
-      const { num } = req.params;
-      const start: number = performance.now();
-      const result: number = this.fibo(parseInt(num, 10));
-      const end: number = performance.now();
-      const response = await axios({
-        method: 'get',
-        url: config.EC2_URL
-      });
-      res
-        .status(HTTTP_STATUS.OK)
-        .send(
-          `Fibonacci series of ${num} is ${result} and it took ${end - start}ms with EC2 instance of ${response} and process id ${process.pid} on ${moment().format('LL')}`
-        );
+      try {
+        const { num } = req.params;
+        const start: number = performance.now();
+        const result: number = this.fibo(parseInt(num, 10));
+        const end: number = performance.now();
+
+        // Call metadata service directly (IMDSv1)
+        let instanceId = 'unavailable';
+        try {
+          const response = await axios.get('http://169.254.169.254/latest/meta-data/instance-id', { timeout: 1000 });
+          instanceId = response.data;
+        } catch (err) {
+          console.error('Metadata fetch failed:');
+        }
+
+        res
+          .status(HTTTP_STATUS.OK)
+          .send(
+            `Fibonacci of ${num} is ${result}, took ${end - start}ms, running on EC2 instance ${instanceId}, process id ${process.pid}, ${moment().format('LL')}`
+          );
+      } catch (error) {
+        res.status(500).send('Error computing Fibonacci');
+      }
     });
     return this.router;
   }
