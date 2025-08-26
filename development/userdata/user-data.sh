@@ -7,6 +7,13 @@ function program_is_installed {
 }
 
 sudo dnf update -y
+sudo dnf install -y ruby wget
+
+cd /home/ec2-user
+
+wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install
+sudo chmod +x ./install
+sudo ./install auto
 
 if [ $(program_is_installed node) == 0 ]; then
   curl -fsSL https://rpm.nodesource.com/setup_22.x | sudo bash -

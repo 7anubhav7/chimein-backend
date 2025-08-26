@@ -30,13 +30,23 @@ class HealthRoutes {
   public instance(): Router {
     this.router.get('/instance', async (req: Request, res: Response) => {
       try {
-        const response = await axios.get('http://169.254.169.254/latest/meta-data/instance-id', {
-          timeout: 1000 // prevent hanging
+        // Step 1: Get the token from IMDSv2
+        const tokenResponse = await axios.put('http://169.254.169.254/latest/api/token', null, {
+          headers: { 'X-aws-ec2-metadata-token-ttl-seconds': '21600' }, // 6 hours
+          timeout: 1000
         });
+
+        const token = tokenResponse.data;
+
+        // Step 2: Use the token to fetch metadata (instance-id)
+        const response = await axios.get('http://169.254.169.254/latest/meta-data/instance-id', {
+          headers: { 'X-aws-ec2-metadata-token': token },
+          timeout: 1000
+        });
+
         res
           .status(HTTTP_STATUS.OK)
           .send(`Server is running on EC2 instance with id ${response.data} and process id ${process.pid} on ${moment().format('LL')}`);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         res.status(HTTTP_STATUS.INTERNAL_SERVER_ERROR).send('Could not fetch instance ID');
       }
@@ -52,13 +62,27 @@ class HealthRoutes {
         const result: number = this.fibo(parseInt(num, 10));
         const end: number = performance.now();
 
-        // Call metadata service directly (IMDSv1)
+        // Default in case metadata fails
         let instanceId = 'unavailable';
+
         try {
-          const response = await axios.get('http://169.254.169.254/latest/meta-data/instance-id', { timeout: 1000 });
+          // Step 1: Get IMDSv2 token
+          const tokenResponse = await axios.put('http://169.254.169.254/latest/api/token', null, {
+            headers: { 'X-aws-ec2-metadata-token-ttl-seconds': '21600' }, // 6 hours
+            timeout: 1000
+          });
+
+          const token = tokenResponse.data;
+
+          // Step 2: Fetch instance-id using token
+          const response = await axios.get('http://169.254.169.254/latest/meta-data/instance-id', {
+            headers: { 'X-aws-ec2-metadata-token': token },
+            timeout: 1000
+          });
+
           instanceId = response.data;
         } catch (err) {
-          console.error('Metadata fetch failed:');
+          console.error('Metadata fetch (IMDSv2) failed:');
         }
 
         res
