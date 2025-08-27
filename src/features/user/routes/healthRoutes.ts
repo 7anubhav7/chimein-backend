@@ -22,7 +22,7 @@ class HealthRoutes {
 
   public env(): Router {
     this.router.get('/env', (req: Request, res: Response) => {
-      res.status(HTTTP_STATUS.OK).send(`This is the ${config.NODE_ENV} environment`);
+      res.status(HTTTP_STATUS.OK).send(`This is the ${config.NODE_ENV} environment after change`);
     });
     return this.router;
   }

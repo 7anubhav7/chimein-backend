@@ -40,4 +40,15 @@ resource "aws_codedeploy_deployment_group" "code_deploy_app_group" {
       termination_wait_time_in_minutes = 0
     }
   }
+
+  provisioner "local-exec" {
+    command     = "${replace(path.module, "\\", "/")}/userdata/delete-asg.sh"
+    interpreter = ["C:/Program Files/Git/bin/bash.exe", "-c"]
+    when        = destroy
+    on_failure  = continue
+
+    environment = {
+      ENV_TYPE = "Backend-${terraform.workspace}"
+    }
+  }
 }
