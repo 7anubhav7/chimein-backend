@@ -17,8 +17,8 @@ class Config {
   public CLOUD_API_SECRET: string | undefined;
   public SENDER_EMAIL: string | undefined;
   public SENDER_EMAIL_PASSWORD: string | undefined;
-  public SENDGRID_API_KEY: string;
-  public SENDGRID_SENDER: string | undefined;
+  public BREVO_USER: string;
+  public BREVO_PASS: string | undefined;
   public EC2_URL: string | undefined;
   public API_URL: string | undefined;
 
@@ -39,8 +39,8 @@ class Config {
 
     this.SENDER_EMAIL = process.env.SENDER_EMAIL || '';
     this.SENDER_EMAIL_PASSWORD = process.env.SENDER_EMAIL_PASSWORD || '';
-    this.SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || '';
-    this.SENDGRID_SENDER = process.env.SENDGRID_SENDER || '';
+    this.BREVO_USER = process.env.BREVO_USER || '';
+    this.BREVO_PASS = process.env.BREVO_PASS || '';
     this.EC2_URL = process.env.EC2_URL || '';
   }
 
