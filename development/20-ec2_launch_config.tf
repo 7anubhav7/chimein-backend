@@ -11,16 +11,16 @@ resource "aws_launch_template" "asg_launch_configuration" {
   block_device_mappings {
     device_name = "/dev/xvda" # root volume
     ebs {
-      volume_size           = 8     # Increase root volume to 8 GB
+      volume_size           = 30    # Increase root volume to 30 GB. Amazon Linux 2023 ami default size
       volume_type           = "gp3" # General Purpose SSD
       delete_on_termination = true
     }
   }
 
   metadata_options {
-  http_endpoint               = "enabled"
-  http_tokens                 = "optional" # not "required"
-  http_put_response_hop_limit = 2
+    http_endpoint               = "enabled"
+    http_tokens                 = "optional" # not "required"
+    http_put_response_hop_limit = 2
   }
 
 
