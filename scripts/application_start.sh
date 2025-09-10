@@ -6,7 +6,7 @@ npm run stop
 npm run delete
 
 # Start app in cluster mode and exit immediately
-NODE_ENV=development pm2 start ./build/src/app.js -i 5 --name chimein --output ./logs/out.log --error ./logs/error.log
+npm run start
 
 # Save PM2 state
 pm2 save
