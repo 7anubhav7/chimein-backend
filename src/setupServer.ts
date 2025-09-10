@@ -31,12 +31,11 @@ export class socketSpeakServer {
   }
 
   public start(): void {
-    this.apiMonitoring(this.app);
     this.securityMiddleware(this.app);
     this.standardMiddleware(this.app);
-    this.startServer(this.app);
     this.routeMiddleware(this.app);
     this.globalErrorHandler(this.app);
+    this.startServer(this.app);
   }
 
   private securityMiddleware(app: Application): void {
