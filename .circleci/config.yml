@@ -156,18 +156,6 @@ jobs:
       - codecov/upload
       - *notify-on-fail
 
-  upload-project-to-s3:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup
-      - *zip-project
-      - run:
-          name: Upload project to s3
-          command: |
-            aws --region ap-south-1 s3 cp chimein.zip s3://chimein-server-${CIRCLE_BRANCH}-app
-      - *notify-on-fail
-
   terraform-validate:
     executor: terraform-executor
     steps:
@@ -187,6 +175,11 @@ jobs:
     steps:
       - checkout
       - *show-current-branch-name
+      - aws-cli/setup
+      - run:
+          name: Install dependencies (bash, unzip)
+          command: |
+            dnf install -y bash unzip
       - run:
           name: Terraform plan
           command: |
@@ -200,6 +193,22 @@ jobs:
             cd deployment/
             terraform workspace select ${CIRCLE_BRANCH}
             terraform apply -auto-approve
+      - *notify-on-fail
+
+  upload-project-to-s3:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup
+      - run:
+          name: Install zip/unzip for zip-project alias
+          command: |
+            sudo apt-get update && sudo apt-get install -y zip unzip
+      - *zip-project
+      - run:
+          name: Upload project to s3
+          command: |
+            aws --region ap-south-1 s3 cp chimein.zip s3://chimein-server-${CIRCLE_BRANCH}-app
       - *notify-on-fail
 
   push-to-aws-code-deploy:
@@ -330,18 +339,9 @@ workflows:
                 - develop
                 - staging
                 - main
-      - upload-project-to-s3:
-          requires:
-            - unit-test
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - main
       - terraform-validate:
           requires:
-            - upload-project-to-s3
+            - unit-test
           filters:
             branches:
               only:
@@ -357,9 +357,18 @@ workflows:
                 - develop
                 - staging
                 - main
-      - push-to-aws-code-deploy:
+      - upload-project-to-s3:
           requires:
             - terraform-plan-and-apply
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - push-to-aws-code-deploy:
+          requires:
+            - upload-project-to-s3
           filters:
             branches:
               only:
