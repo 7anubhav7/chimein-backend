@@ -15,7 +15,7 @@ executors:
       - image: hashicorp/terraform:1.12.0
   slack-executor:
     docker:
-      - image: 'cibuilds/base:latest'
+      - image: 'cimg/base:stable'
     resource_class: small
 
 aliases:
