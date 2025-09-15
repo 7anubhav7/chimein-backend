@@ -318,6 +318,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -327,6 +328,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -336,6 +338,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -345,6 +348,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -354,6 +358,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -363,6 +368,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -372,6 +378,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -381,6 +388,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -394,6 +402,7 @@ workflows:
           filters:
             branches:
               only:
+                - feature/circleci-config
                 - develop
                 - staging
                 - main
