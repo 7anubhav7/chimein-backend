@@ -213,9 +213,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apt-get update
-            apt-get install -y bash curl less zip unzip ca-certificates
-            update-ca-certificates
+            sudo apt-get update
+            sudo apt-get install -y bash curl less zip unzip ca-certificates
+            sudo update-ca-certificates
       - run:
           name: This job works
           command: |
