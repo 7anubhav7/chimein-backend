@@ -23,7 +23,7 @@ resource "aws_elasticache_replication_group" "chimein_redis_cluster" {
     command = "${replace(path.module, "\\", "/")}/userdata/update-env-file.sh"
 
 
-    interpreter = ["C:/Program Files/Git/bin/bash.exe", "-c"]
+    interpreter = ["bash", "-c"]
 
     environment = {
       ELASTICACHE_ENDPOINT = self.primary_endpoint_address

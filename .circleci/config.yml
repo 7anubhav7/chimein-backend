@@ -176,12 +176,19 @@ jobs:
             apk add --no-cache bash
       - *notify-on-fail
 
-  terraform-aws-cli-test:
+  terraform-container-test:
     executor: terraform-executor
     steps:
       - checkout
       - *show-current-branch-name
       - aws-cli/setup
+      - run:
+          name: Install all dependencies
+          command: |
+            apk update
+            apk upgrade
+            apk add --no-cache bash
+            apk add --no-cache zip unzip
       - run:
           name: This job works
           command: |
@@ -191,8 +198,15 @@ jobs:
             echo "Terraform version:"
             terraform -version
 
+            echo "=== Zip Version ==="
+            zip -v | head -n 1
+
+            echo "=== Bash Version ==="
+            bash --version
+            which bash
+
   aws-executor-test:
-    executor: terraform-executor
+    executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup
@@ -203,17 +217,25 @@ jobs:
       - run:
           name: This job works
           command: |
-            echo "AWS CLI version:"
+            echo "=== AWS CLI Version ==="
             aws --version
 
-            echo "Terraform version:"
-            terraform -version
+            echo "=== Bash Version ==="
+            bash --version
+            which bash
 
-            echo "Zip version:"
+            echo "=== Zip Version ==="
             zip -v | head -n 1
 
-            echo "Unzip version:"
+            echo "=== Unzip Version ==="
             unzip -v | head -n 1
+
+            echo "=== Testing S3 Connection ==="
+            aws --region ap-south-1 s3 ls s3://chimein-test-bucket || echo "S3 connection failed"
+
+            echo "=== Testing CodeDeploy Connection ==="
+            aws --region ap-south-1 deploy list-applications || echo "CodeDeploy connection failed"
+      - *notify-on-fail
 
   terraform-plan-and-apply:
     executor: terraform-executor
@@ -226,6 +248,7 @@ jobs:
             apk update
             apk upgrade
             apk add --no-cache bash
+            apk add --no-cache zip unzip
       - aws-cli/setup
       - run:
           name: Terraform plan
@@ -347,6 +370,13 @@ jobs:
     steps:
       - checkout
       - *show-current-branch-name
+      - aws-cli/setup
+      - run:
+          name: Install bash for this container
+          command: |
+            apk update
+            apk upgrade
+            apk add --no-cache bash
       - run:
           name: Terraform destroy
           command: |
@@ -359,9 +389,16 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - terraform-aws-cli-test:
+      - terraform-container-test:
           requires:
             - build
+          filters:
+            branches:
+              only:
+                - feature/circleci-config
+      - aws-executor-test:
+          requires:
+            - terraform-container-test
           filters:
             branches:
               only:
@@ -448,13 +485,6 @@ workflows:
                 - develop
                 - staging
                 - main
-      - aws-executor-test:
-          requires:
-            - terraform-aws-cli-test
-          filters:
-            branches:
-              only:
-                - feature/circleci-config
       - terraform-destroy:
           requires:
             - hold
