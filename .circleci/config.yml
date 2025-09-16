@@ -12,7 +12,7 @@ executors:
     working_directory: ~/repo
   terraform-executor:
     docker:
-      - image: hashicorp/terraform:1.12.2
+      - image: hashicorp/terraform:1.12.0
   slack-executor:
     docker:
       - image: 'cimg/base:stable'
@@ -168,6 +168,12 @@ jobs:
             terraform init -backend=false
             terraform validate
             terraform fmt
+      - run:
+          name: Install bash for this container
+          command: |
+            apk update
+            apk upgrade
+            apk add --no-cache bash
       - *notify-on-fail
 
   terraform-plan-and-apply:
