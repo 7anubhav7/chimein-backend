@@ -199,6 +199,12 @@ jobs:
             cd deployment/
             terraform workspace select ${CIRCLE_BRANCH}
             terraform apply -auto-approve
+      - run:
+          name: Install bash for this container
+          command: |
+            apk update
+            apk upgrade
+            apk add --no-cache bash
       - *notify-on-fail
 
   upload-project-to-s3:
@@ -370,7 +376,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -380,7 +385,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -390,7 +394,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -400,7 +403,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -414,7 +416,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
