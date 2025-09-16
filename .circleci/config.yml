@@ -176,16 +176,25 @@ jobs:
             apk add --no-cache bash
       - *notify-on-fail
 
-  terraform-plan-and-apply:
+  terraform-aws-cli-test:
     executor: terraform-executor
     steps:
       - checkout
       - *show-current-branch-name
       - aws-cli/setup
+
+  terraform-plan-and-apply:
+    executor: terraform-executor
+    steps:
+      - checkout
+      - *show-current-branch-name
       - run:
-          name: Install dependencies (bash, unzip)
+          name: Install bash for this container
           command: |
-            dnf install -y bash unzip
+            apk update
+            apk upgrade
+            apk add --no-cache bash
+      - aws-cli/setup
       - run:
           name: Terraform plan
           command: |
@@ -199,12 +208,6 @@ jobs:
             cd deployment/
             terraform workspace select ${CIRCLE_BRANCH}
             terraform apply -auto-approve
-      - run:
-          name: Install bash for this container
-          command: |
-            apk update
-            apk upgrade
-            apk add --no-cache bash
       - *notify-on-fail
 
   upload-project-to-s3:
@@ -307,12 +310,6 @@ jobs:
             ]
             }
 
-  slack-notify-on-fail:
-    executor: slack-executor
-    steps:
-      - checkout
-      - *notify-on-fail
-
   terraform-destroy:
     executor: terraform-executor
     steps:
@@ -330,13 +327,26 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - linting:
+      - terraform-aws-cli-test:
           requires:
             - build
           filters:
             branches:
               only:
                 - feature/circleci-config
+      - notify-via-slack:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - feature/circleci-config
+      - linting:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
                 - develop
                 - staging
                 - main
@@ -346,7 +356,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -356,7 +365,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
@@ -366,7 +374,6 @@ workflows:
           filters:
             branches:
               only:
-                - feature/circleci-config
                 - develop
                 - staging
                 - main
