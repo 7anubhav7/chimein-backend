@@ -231,6 +231,7 @@ jobs:
             unzip -v | head -n 1
 
             echo "=== Testing S3 Connection ==="
+            aws sts get-caller-identity
             aws --region ap-south-1 s3 ls s3://chimein-bucket || echo "S3 connection failed"
       - *notify-on-fail
 
@@ -386,16 +387,14 @@ workflows:
   build_and_deploy:
     jobs:
       - build
-      - terraform-container-test:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - feature/circleci-config
+      # - terraform-container-test:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only:
+      #           - feature/circleci-config
       - aws-executor-test:
-          requires:
-            - terraform-container-test
           filters:
             branches:
               only:
