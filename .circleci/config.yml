@@ -232,7 +232,6 @@ jobs:
 
             echo "=== Testing S3 Connection ==="
             aws sts get-caller-identity
-            aws --region ap-south-1 s3 ls s3://chimein-bucket || echo "S3 connection failed"
       - *notify-on-fail
 
   terraform-plan-and-apply:
