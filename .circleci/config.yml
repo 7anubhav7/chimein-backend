@@ -183,6 +183,20 @@ jobs:
       - *show-current-branch-name
       - aws-cli/setup
 
+  aws-executor-test:
+    executor: aws-cli/default
+    steps:
+      - checkout
+      - aws-cli/setup
+      - run:
+          name: Install zip/unzip for zip-project alias
+          command: |
+            sudo apt-get update && sudo apt-get install -y zip unzip
+      - run:
+          name: This job works
+          command: |
+            echo "Job works"
+
   terraform-plan-and-apply:
     executor: terraform-executor
     steps:
@@ -336,7 +350,7 @@ workflows:
                 - feature/circleci-config
       - notify-via-slack:
           requires:
-            - build
+            - terraform-aws-cli-test
           filters:
             branches:
               only:
@@ -404,19 +418,26 @@ workflows:
                 - develop
                 - staging
                 - main
-      - notify-via-slack:
-          requires:
-            - push-to-aws-code-deploy
-          filters:
-            branches:
-              only:
-                - develop
-                - staging
-                - main
+      # - notify-via-slack:
+      #     requires:
+      #       - push-to-aws-code-deploy
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #           - staging
+      #           - main
       - hold:
           type: approval
           requires:
             - notify-via-slack
+      - aws-executor-test:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - feature/circleci-config
       - terraform-destroy:
           requires:
             - hold
