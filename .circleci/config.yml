@@ -17,6 +17,9 @@ executors:
     docker:
       - image: 'cimg/base:stable'
     resource_class: small
+  aws-executor:
+    docker:
+      - image: 'cimg/aws:2025.01'
 
 aliases:
   - &show-current-branch-name
@@ -47,7 +50,7 @@ aliases:
   - &notify-on-fail
     slack/notify:
       event: fail
-      channel: 'chatty-app-builds'
+      channel: '#circle-ci-notif'
       template: ''
       custom: |
         {
@@ -205,18 +208,15 @@ jobs:
             bash --version
             which bash
 
-  aws-executor-test:
-    executor: aws-cli/default
+  aws-connection-test:
+    executor: aws-executor
     steps:
       - checkout
-      - aws-cli/setup:
-          profile_name: default
       - run:
           name: Install dependencies
           command: |
-            sudo apt-get update
-            sudo apt-get install -y curl less zip unzip ca-certificates
-            sudo update-ca-certificates
+            sudo yum update
+            sudo yum install -y zip unzip
       - run:
           name: This job works
           command: |
@@ -396,7 +396,7 @@ workflows:
       #       branches:
       #         only:
       #           - feature/circleci-config
-      - aws-executor-test:
+      - aws-connection-test:
           filters:
             branches:
               only:
