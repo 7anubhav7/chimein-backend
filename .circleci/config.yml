@@ -19,7 +19,7 @@ executors:
     resource_class: small
   aws-executor:
     docker:
-      - image: 'cimg/aws:2025.01'
+      - image: cimg/aws:2025.01
 
 aliases:
   - &show-current-branch-name
@@ -215,8 +215,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo yum update
-            sudo yum install -y zip unzip
+            sudo apt update
+            sudo apt install zip unzip
       - run:
           name: This job works
           command: |
