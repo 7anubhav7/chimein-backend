@@ -19,7 +19,7 @@ executors:
     resource_class: small
   aws-executor:
     docker:
-      - image: cimg/aws:2025.01
+      - image: 'cimg/base:stable'
 
 aliases:
   - &show-current-branch-name
@@ -213,14 +213,22 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install dependencies
+          name:
           command: |
-            sudo apt update
-            sudo apt install zip unzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip -u awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Configure AWS CLI (Optional, if not using env vars)
+          command: |
+            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+            aws configure set default.region ${AWS_DEFAULT_REGION}
       - run:
           name: This job works
           command: |
             echo "=== AWS CLI Version ==="
+            which aws
             aws --version
 
             echo "=== Bash Version ==="
@@ -234,7 +242,7 @@ jobs:
             unzip -v | head -n 1
 
             echo "=== Testing S3 Connection ==="
-            aws --region ap-south-1 s3 ls s3://chimein-bucket
+            aws s3 ls
       - *notify-on-fail
 
   terraform-plan-and-apply:
@@ -388,7 +396,7 @@ jobs:
 workflows:
   build_and_deploy:
     jobs:
-      # - build
+      - build
       # - terraform-container-test:
       #     requires:
       #       - build
@@ -397,6 +405,8 @@ workflows:
       #         only:
       #           - feature/circleci-config
       - aws-connection-test:
+          requires:
+            - build
           filters:
             branches:
               only:
