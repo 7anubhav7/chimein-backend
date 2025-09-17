@@ -1,7 +1,7 @@
 orbs:
   codecov: codecov/codecov@5.4.3
   slack: circleci/slack@5.2.3
-  aws-cli: circleci/aws-cli@5.4.1
+  aws-cli: circleci/aws-cli@5.1
 version: 2.1
 executors:
   app-executor:
@@ -209,12 +209,13 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile_name: default
       - run:
           name: Install dependencies
           command: |
             sudo apt-get update
-            sudo apt-get install -y bash curl less zip unzip ca-certificates
+            sudo apt-get install -y curl less zip unzip ca-certificates
             sudo update-ca-certificates
       - run:
           name: This job works
@@ -233,7 +234,7 @@ jobs:
             unzip -v | head -n 1
 
             echo "=== Testing S3 Connection ==="
-            aws sts get-caller-identity
+            aws --region ap-south-1 s3 ls s3://chimein-bucket
       - *notify-on-fail
 
   terraform-plan-and-apply:
