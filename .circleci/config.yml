@@ -219,6 +219,8 @@ jobs:
             ls
             cat config
             cat credentials
+            aws s3 ls
+            aws sts get-caller-identity
       - *notify-on-fail
 
   terraform-plan-and-apply:
