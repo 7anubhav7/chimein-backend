@@ -210,7 +210,7 @@ jobs:
     steps:
       - checkout
       - aws-cli/setup:
-          profile-name: TestProfile
+          profile_name: TestProfile
       - run:
           name: This job works
           command: |
