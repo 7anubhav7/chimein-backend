@@ -1,7 +1,7 @@
 orbs:
   codecov: codecov/codecov@5.4.3
   slack: circleci/slack@5.2.3
-  aws-cli: circleci/aws-cli@5.1
+  aws-cli: circleci/aws-cli@4.0.0
 version: 2.1
 executors:
   app-executor:
@@ -17,9 +17,6 @@ executors:
     docker:
       - image: 'cimg/base:stable'
     resource_class: small
-  aws-executor:
-    docker:
-      - image: 'cimg/base:stable'
 
 aliases:
   - &show-current-branch-name
@@ -209,21 +206,11 @@ jobs:
             which bash
 
   aws-connection-test:
-    executor: aws-executor
+    executor: aws-cli/default
     steps:
       - checkout
-      - run:
-          name:
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip -u awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Configure AWS CLI (Optional, if not using env vars)
-          command: |
-            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-            aws configure set default.region ${AWS_DEFAULT_REGION}
+      - aws-cli/setup:
+          profile-name: TestProfile
       - run:
           name: This job works
           command: |
@@ -241,8 +228,11 @@ jobs:
             echo "=== Unzip Version ==="
             unzip -v | head -n 1
 
-            echo "=== Testing S3 Connection ==="
-            aws s3 ls
+            echo "=== Testing Account Connection ==="
+            cd ~/.aws
+            ls
+            cat config
+            cat credentials
       - *notify-on-fail
 
   terraform-plan-and-apply:
@@ -411,94 +401,94 @@ workflows:
             branches:
               only:
                 - feature/circleci-config
-      # - linting:
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - code-formatter-check:
-      #     requires:
-      #       - linting
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - unit-test:
-      #     requires:
-      #       - code-formatter-check
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - terraform-validate:
-      #     requires:
-      #       - unit-test
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - terraform-plan-and-apply:
-      #     requires:
-      #       - terraform-validate
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - upload-project-to-s3:
-      #     requires:
-      #       - terraform-plan-and-apply
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - push-to-aws-code-deploy:
-      #     requires:
-      #       - upload-project-to-s3
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - notify-via-slack:
-      #     requires:
-      #       - push-to-aws-code-deploy
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - hold:
-      #     type: approval
-      #     requires:
-      #       - notify-via-slack
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - terraform-destroy:
-      #     requires:
-      #       - hold
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
+      - linting:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - code-formatter-check:
+          requires:
+            - linting
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - unit-test:
+          requires:
+            - code-formatter-check
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - terraform-validate:
+          requires:
+            - unit-test
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - terraform-plan-and-apply:
+          requires:
+            - terraform-validate
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - upload-project-to-s3:
+          requires:
+            - terraform-plan-and-apply
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - push-to-aws-code-deploy:
+          requires:
+            - upload-project-to-s3
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - notify-via-slack:
+          requires:
+            - push-to-aws-code-deploy
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - hold:
+          type: approval
+          requires:
+            - notify-via-slack
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - terraform-destroy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
