@@ -1,7 +1,6 @@
 terraform {
   backend "s3" {
     bucket  = "chimein-app-terraform-state"
-    key     = "develop/chimein.tfstate"
     region  = "ap-south-1"
     encrypt = true
   }

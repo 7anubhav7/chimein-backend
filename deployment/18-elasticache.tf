@@ -20,8 +20,7 @@ resource "aws_elasticache_replication_group" "chimein_redis_cluster" {
   depends_on = [aws_security_group.elasticache_sg]
 
   provisioner "local-exec" {
-    command = "${replace(path.module, "\\", "/")}/userdata/update-env-file.sh"
-
+    command = "bash ${replace(path.module, "\\", "/")}/userdata/update-env-file.sh"
 
     interpreter = ["bash", "-c"]
 
