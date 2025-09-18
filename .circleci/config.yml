@@ -176,53 +176,6 @@ jobs:
             apk add --no-cache bash
       - *notify-on-fail
 
-  terraform-container-test:
-    executor: terraform-executor
-    steps:
-      - checkout
-      - *show-current-branch-name
-      - aws-cli/setup
-      - run:
-          name: Install all dependencies
-          command: |
-            apk update
-            apk upgrade
-            apk add --no-cache bash
-            apk add --no-cache zip unzip
-      - run:
-          name: This job works
-          command: |
-            echo "AWS CLI version:"
-            aws --version
-
-            echo "Terraform version:"
-            terraform -version
-
-            echo "=== Zip Version ==="
-            zip -v | head -n 1
-
-            echo "=== Bash Version ==="
-            bash --version
-            which bash
-
-  aws-connection-test:
-    executor: aws-cli/default
-    steps:
-      - checkout
-      - aws-cli/setup:
-          profile_name: TestProfile
-      - run:
-          name: Connection test
-          command: |
-            echo "=== Testing Account Connection ==="
-            cd ~/.aws
-            ls
-            cat config
-            cat credentials
-            aws s3 ls
-            aws sts get-caller-identity
-      - *notify-on-fail
-
   terraform-plan-and-apply:
     executor: terraform-executor
     steps:
@@ -235,7 +188,8 @@ jobs:
             apk upgrade
             apk add --no-cache bash
             apk add --no-cache zip unzip
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile_name: circleci
       - run:
           name: Terraform plan
           command: |
@@ -255,7 +209,8 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile_name: circleci
       - run:
           name: Install zip/unzip for zip-project alias
           command: |
@@ -271,7 +226,8 @@ jobs:
     executor: aws-cli/default
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile_name: circleci
       - run:
           name: Deploy changes with AWS code deploy
           command: |
@@ -356,7 +312,8 @@ jobs:
     steps:
       - checkout
       - *show-current-branch-name
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile_name: circleci
       - run:
           name: Install bash for this container
           command: |
@@ -374,107 +331,95 @@ jobs:
 workflows:
   build_and_deploy:
     jobs:
-      # - build
-      # - terraform-container-test:
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         only:
-      #           - feature/circleci-config
-      - aws-connection-test:
+      - build
+      - linting:
+          requires:
+            - build
           filters:
             branches:
               only:
-                - feature/circleci-config
-      # - linting:
-      #     requires:
-      #       - build
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - code-formatter-check:
-      #     requires:
-      #       - linting
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - unit-test:
-      #     requires:
-      #       - code-formatter-check
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - terraform-validate:
-      #     requires:
-      #       - unit-test
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - terraform-plan-and-apply:
-      #     requires:
-      #       - terraform-validate
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - upload-project-to-s3:
-      #     requires:
-      #       - terraform-plan-and-apply
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - push-to-aws-code-deploy:
-      #     requires:
-      #       - upload-project-to-s3
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - notify-via-slack:
-      #     requires:
-      #       - push-to-aws-code-deploy
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - hold:
-      #     type: approval
-      #     requires:
-      #       - notify-via-slack
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
-      # - terraform-destroy:
-      #     requires:
-      #       - hold
-      #     filters:
-      #       branches:
-      #         only:
-      #           - develop
-      #           - staging
-      #           - main
+                - develop
+                - staging
+                - main
+      - code-formatter-check:
+          requires:
+            - linting
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - unit-test:
+          requires:
+            - code-formatter-check
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - terraform-validate:
+          requires:
+            - unit-test
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - terraform-plan-and-apply:
+          requires:
+            - terraform-validate
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - upload-project-to-s3:
+          requires:
+            - terraform-plan-and-apply
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - push-to-aws-code-deploy:
+          requires:
+            - upload-project-to-s3
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - notify-via-slack:
+          requires:
+            - push-to-aws-code-deploy
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - hold:
+          type: approval
+          requires:
+            - notify-via-slack
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
+      - terraform-destroy:
+          requires:
+            - hold
+          filters:
+            branches:
+              only:
+                - develop
+                - staging
+                - main
