@@ -12,7 +12,7 @@ resource "aws_instance" "bastion_host" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size = 2       # minimal, safe for bastion usage
+    volume_size = 2
     volume_type = "gp3"
   }
 

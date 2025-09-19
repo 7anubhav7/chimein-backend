@@ -194,9 +194,14 @@ jobs:
           name: Terraform plan
           command: |
             cd deployment/
-            terraform init \
-              -backend-config="key=${CIRCLE_BRANCH}/chimein.tfstate"
+            terraform init
             terraform plan
+      - run:
+          name: Terraform workspace select
+          command: |
+            cd deployment/
+            terraform workspace list
+            terraform workspace select ${CIRCLE_BRANCH} || terraform workspace new ${CIRCLE_BRANCH}
       - run:
           name: Terraform apply
           command: |
