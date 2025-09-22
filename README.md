@@ -1,1 +1,1 @@
-# ChimeIn
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/7anubhav7/chimein-backend/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/7anubhav7/chimein-backend/tree/develop)
