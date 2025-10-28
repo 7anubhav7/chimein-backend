@@ -3,6 +3,7 @@ import { socketSpeakServer } from '@root/setupServer';
 import databaseConnection from '@root/setupDatabase';
 import { config } from '@root/config';
 import Logger from 'bunyan';
+import 'express-async-errors';
 
 const log: Logger = config.createLogger('app');
 

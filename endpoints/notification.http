@@ -3,7 +3,7 @@
 
 
 ###
-PUT {{baseUrl}}/{{urlPath}}/notification/688ce8190c65897b58b07b47
+PUT {{baseUrl}}/{{urlPath}}/notification/68d36035912ef43fcb69b3af
 Content-Type: application/json
 Accept: application/json
 withCredentials: true

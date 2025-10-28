@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-aws s3 sync s3://chimein-bucket/develop .
+aws s3 sync s3://chimein-bucket/backend/develop .
 unzip env-file.zip
 cp .env.develop .env
 rm .env.develop
