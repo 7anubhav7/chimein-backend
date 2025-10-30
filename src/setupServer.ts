@@ -1,3 +1,4 @@
+import 'express-async-errors';
 import { Application, json, urlencoded, Response, Request, NextFunction } from 'express';
 import http from 'http';
 import cors from 'cors';
@@ -20,7 +21,6 @@ import { SocketIOImageHandler } from '@sockets/image';
 import { SocketIOChatHandler } from '@sockets/chat';
 import { SocketIOUserHandler } from '@sockets/user';
 import apiStats from 'swagger-stats';
-import 'express-async-errors';
 
 const SERVER_PORT = 5000; //to used in aws and load balancers
 const log: Logger = config.createLogger('server');
@@ -40,6 +40,7 @@ export class socketSpeakServer {
   }
 
   private securityMiddleware(app: Application): void {
+    app.set('trust proxy', 1);
     app.use(
       cookieSession({
         name: 'session',
