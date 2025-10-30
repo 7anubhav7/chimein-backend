@@ -38,7 +38,7 @@ git clone -b develop https://github.com/7anubhav7/chimein-backend.git
 
 cd chimein-backend
 npm install
-aws s3 sync s3://chimein-bucket/develop .
+aws s3 sync s3://chimein-bucket/backend/develop .
 unzip env-file.zip
 cp .env.develop .env
 npm run build

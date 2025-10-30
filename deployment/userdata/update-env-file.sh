@@ -7,6 +7,6 @@ sed -i -e "s|^ *REDIS_HOST=.*|REDIS_HOST=redis://$ELASTICACHE_ENDPOINT:6379|" .e
 rm -rf env-file.zip
 cp .env .env.develop
 zip env-file.zip .env.develop
-aws --region ap-south-1 s3 cp env-file.zip s3://chimein-bucket/develop/
+aws --region ap-south-1 s3 cp env-file.zip s3://chimein-bucket/backend/develop/
 rm -rf .env*
 rm -rf env-file.zip
