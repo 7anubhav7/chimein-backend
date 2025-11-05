@@ -14,7 +14,7 @@
     "test": "jest --coverage=true -w=1 --forceExit --detectOpenHandles --watchAll=false",
     "build": "ttsc -p .",
     "seeds:dev": "npx ts-node src/seeds.ts",
-    "start": "NODE_ENV=development pm2 start ./build/src/app.js -i 5 --attach --watch | bunyan",
+    "start": "NODE_ENV=staging pm2 start ./build/src/app.js -i 5 --attach --watch | bunyan",
     "seeds:prod": "npx ts-node ./build/src/seeds.js"
   },
   "keywords": [],

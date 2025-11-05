@@ -34,12 +34,12 @@ fi
 
 cd /home/ec2-user
 
-git clone -b develop https://github.com/7anubhav7/chimein-backend.git
+git clone -b staging https://github.com/7anubhav7/chimein-backend.git
 
 cd chimein-backend
 npm install
-aws s3 sync s3://chimein-bucket/backend/develop .
+aws s3 sync s3://chimein-bucket/backend/staging .
 unzip env-file.zip
-cp .env.develop .env
+cp .env.staging .env
 npm run build
 npm run start
