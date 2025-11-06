@@ -10,7 +10,7 @@ class NotificationTemplate {
       username,
       header,
       message,
-      image_url: '/lockicon.png'
+      image_url: 'https://res.cloudinary.com/dtncgifkk/image/upload/v1762448102/follow-icon-png-5_r6xckx.png'
     });
   }
 }

@@ -10,7 +10,7 @@ class ResetPasswordTemplate {
       email,
       ipaddress,
       date,
-      image_url: '/lockicon.png'
+      image_url: 'https://res.cloudinary.com/dtncgifkk/image/upload/v1762447977/lockicon_ypkgj1.png'
     });
   }
 }
