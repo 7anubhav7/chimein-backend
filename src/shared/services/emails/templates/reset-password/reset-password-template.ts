@@ -10,7 +10,7 @@ class ResetPasswordTemplate {
       email,
       ipaddress,
       date,
-      image_url: '../forgot-password/lockicon.png'
+      image_url: '/lockicon.png'
     });
   }
 }
