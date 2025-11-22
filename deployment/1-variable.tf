@@ -79,7 +79,7 @@ variable "ec2_instance_profile_name" {
 variable "elasticache_node_type" {
   description = "Elasticache Node Type"
   type        = string
-  default     = "cache.t2.micro"
+  default     = "cache.t3.small"
 }
 
 variable "elasticache_parameter_group_name" {
